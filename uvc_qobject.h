@@ -3,28 +3,20 @@
 
 #include <QtCore/qobject.h>
 #include "libuvc/libuvc.h"
-#include "MainWidget.h"
 
-class UVCQObject:public QObject
+class UVCQObject : public QObject
 {
     Q_OBJECT
 public:
     UVCQObject();
-    void run(MainWidget *mw);
-    void stop();
-protected:
-
-    uvc_error init();
+    ~UVCQObject();
 
 private:
-    uvc_context_t *ctx;
-    uvc_device_t *dev;
-    uvc_device_handle_t *devh;
-    uvc_stream_ctrl_t ctrl;
-    uvc_error_t res;
-    
-signals:
-    void valueChanged(int newValue);
+    uvc_error init();
+    uvc_context_t *ctx_;
+    uvc_device_t *dev_;
+    uvc_device_handle_t *devh_;
+    uvc_stream_ctrl_t ctrl_;
 };
 
 #endif // !_UVC_THREAD_H

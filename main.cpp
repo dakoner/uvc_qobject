@@ -1,16 +1,15 @@
-#include <QCoreApplication>
 #include "libuvc/libuvc.h"
 #include "uvc_qobject.h"
-#include <stdio.h>
-#include <unistd.h>
 
-#include <QLabel>
+#include <QCoreApplication>
+#include <QTimer>
+
 int main(int argc, char *argv[])
 {
-    // Creates an instance of QApplication
-    QCoreApplication a(argc, argv);
+    QCoreApplication app(argc, argv);
     UVCQObject uvc_qobject;
-
-    // run the application and return execs() return value/code
-    return a.exec();
+    QList<uvc_device_t *> devices = uvc_qobject.find_devices();
+    qDebug() << devices;
+    QTimer::singleShot(1000, &app, &QCoreApplication::quit); // Quit after 1 second (1000 milliseconds)
+    return app.exec();
 }

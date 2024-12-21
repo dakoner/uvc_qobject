@@ -2,6 +2,7 @@
 #define _UVC_THREAD_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qlist.h>
 #include "libuvc/libuvc.h"
 
 class UVCQObject : public QObject
@@ -10,6 +11,8 @@ class UVCQObject : public QObject
 public:
     UVCQObject();
     ~UVCQObject();
+    QList<uvc_device_t *> find_devices();
+    void open_device(uvc_device_t *device);
 
 private:
     uvc_error init();

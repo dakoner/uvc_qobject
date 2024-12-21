@@ -41,23 +41,27 @@ QList<uvc_device_t *> UVCQObject::find_devices()
     return devices;
 }
 
-uvc_device_handle* UVCQObject::open_device(uvc_device_t *device)
+uvc_error_t UVCQObject::open_device(uvc_device_t *device, uvc_device_handle **devh)
 {
-    uvc_device_handle *devh;
     /* Try to open the device: requires exclusive access */
-    uvc_error_t res = uvc_open(device, &devh);
+    uvc_error_t res = uvc_open(device, devh);
 
     if (res < 0)
     {
         uvc_perror(res, "uvc_open"); /* unable to open device */
+        return res;
     }
     else
     {
         puts("Device opened");
-        uvc_print_diag(devh, stderr);
-        // uvc_close(devh);
     }
-    return devh;
+    return UVC_SUCCESS;
+}
+
+
+void UVCQObject::close_device(uvc_device_handle *devh)
+{
+    uvc_close(devh);
 }
 
 UVCQObject::~UVCQObject()

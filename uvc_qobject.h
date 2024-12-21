@@ -12,7 +12,8 @@ public:
     UVCQObject();
     ~UVCQObject();
     QList<uvc_device_t *> find_devices();
-    uvc_device_handle_t* open_device(uvc_device_t *device);
+    uvc_error open_device(uvc_device_t *device, uvc_device_handle_t **devh);
+    void close_device(uvc_device_handle_t *devh);
 
 private:
     uvc_context_t *ctx_;

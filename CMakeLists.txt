@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.28)
 
 set(PROJECT "uvc_camera_qobject")
 
-project(${PROJECT})
+project(${PROJECT} LANGUAGES CXX)
 # 3rd party tools
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -35,10 +35,15 @@ add_executable(${PROJECT} ${HEADERS} ${SOURCES} ${QT_RESOURCES})
 
 target_link_libraries(${PROJECT}
     PRIVATE
-    Qt6::Widgets
     Qt6::Core
     usb
     uvc
     jpeg
     )
 
+
+install(TARGETS ${PROJECT}
+    BUNDLE  DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)

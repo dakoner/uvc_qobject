@@ -2,11 +2,13 @@
 
 UVCQObject::UVCQObject()
 {
-    if (init() != UVC_SUCCESS)
+    uvc_error res = uvc_init(&ctx_, NULL);
+
+    if (res < 0)
     {
+        uvc_perror(res, "uvc_init");
         throw std::runtime_error("Failed to initialize");
     }
-    uvc_error res;
 }
 
 QList<uvc_device_t *> UVCQObject::find_devices()
@@ -24,7 +26,6 @@ QList<uvc_device_t *> UVCQObject::find_devices()
     }
     uvc_device_t *d = *devs;
     // select device by index
-    dev_ = NULL;
     int dev_idx = 0;
     QList<uvc_device_t *> devices;
 
@@ -40,7 +41,7 @@ QList<uvc_device_t *> UVCQObject::find_devices()
     return devices;
 }
 
-void UVCQObject::open_device(uvc_device_t *device)
+uvc_device_handle* UVCQObject::open_device(uvc_device_t *device)
 {
     uvc_device_handle *devh;
     /* Try to open the device: requires exclusive access */
@@ -53,27 +54,14 @@ void UVCQObject::open_device(uvc_device_t *device)
     else
     {
         puts("Device opened");
-        // uvc_print_diag(devh, stderr);
-        uvc_close(devh);
+        uvc_print_diag(devh, stderr);
+        // uvc_close(devh);
     }
+    return devh;
 }
 
 UVCQObject::~UVCQObject()
 {
     uvc_exit(ctx_);
     puts("UVC exited");
-}
-
-uvc_error UVCQObject::init()
-{
-    uvc_error res = uvc_init(&ctx_, NULL);
-
-    if (res < 0)
-    {
-        uvc_perror(res, "uvc_init");
-        return res;
-    }
-
-    puts("UVC initialized");
-    return res;
 }

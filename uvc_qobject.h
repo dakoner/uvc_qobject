@@ -16,6 +16,7 @@ class FormatAndFrameDescriptors
 class UVCQObject : public QObject
 {
     Q_OBJECT
+
 public:
     UVCQObject();
     ~UVCQObject();
@@ -26,10 +27,13 @@ public:
     QList<FormatAndFrameDescriptors *> *get_formats(uvc_device_handle *devh);
     uvc_error stream(uvc_device_handle *devh, uvc_frame_format frame_format, int width, int height, int fps);
     static void cb(uvc_frame *frame, void *ptr);
-    void updateFrame(uvc_frame *frame);
 
 private:
     uvc_context_t *ctx_;
+
+    
+signals:
+    void frameChanged(uvc_frame *frame);
 };
 
 #endif // !_UVC_THREAD_H

@@ -112,8 +112,6 @@ void UVCQObject::cb(uvc_frame *frame, void *ptr)
     uvc_frame_t *bgr;
     uvc_error_t ret;
 
-    printf("callback! frame_format = %d, width = %d, height = %d, length = %lu, ptr = %p\n",
-           frame->frame_format, frame->width, frame->height, frame->data_bytes, ptr);
     if (frame->frame_format == UVC_COLOR_FORMAT_YUYV)
     {
         if (frame->width * frame->height * 2 != frame->data_bytes)
@@ -134,15 +132,10 @@ void UVCQObject::cb(uvc_frame *frame, void *ptr)
             uvc_free_frame(bgr);
             return;
         }
-        ((UVCQObject *)ptr)->updateFrame(bgr);
+        emit ((UVCQObject *)ptr)->frameChanged(bgr);
     }
 }
 
-void UVCQObject::updateFrame(uvc_frame *frame)
-{
-    printf("updateFrame! frame_format = %d, width = %d, height = %d, length = %lu\n",
-           frame->frame_format, frame->width, frame->height, frame->data_bytes);
-}
 
 uvc_error UVCQObject::stream(uvc_device_handle *devh, uvc_frame_format frame_format, int width, int height, int fps)
 {

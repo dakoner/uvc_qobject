@@ -4,7 +4,7 @@ set(PROJECT "uvc_camera_qobject")
 
 project(${PROJECT} LANGUAGES CXX)
 # 3rd party tools
-find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
 
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -36,6 +36,8 @@ add_executable(${PROJECT} ${HEADERS} ${SOURCES} ${QT_RESOURCES})
 target_link_libraries(${PROJECT}
     PRIVATE
     Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
     usb
     uvc
     jpeg

@@ -58,6 +58,28 @@ uvc_error_t UVCQObject::open_device(uvc_device_t *device, uvc_device_handle **de
     return UVC_SUCCESS;
 }
 
+QList<FormatAndFrameDescriptors *> *UVCQObject::get_formats(uvc_device_handle *devh)
+{
+    QList<FormatAndFrameDescriptors*> *lf = new QList<FormatAndFrameDescriptors*>;
+
+    const uvc_format_desc_t *format_desc = uvc_get_format_descs(devh);
+
+    while (format_desc != NULL)
+    {
+        FormatAndFrameDescriptors *f = new FormatAndFrameDescriptors;
+        f->devh = devh;
+        f->format_desc = format_desc;
+        const uvc_frame_desc_t *frame_desc = format_desc->frame_descs;
+        while (frame_desc != NULL)
+        {
+            f->frame_desc.push_back(frame_desc);
+            frame_desc = frame_desc->next;
+        }
+        lf->push_back(f);
+        format_desc = format_desc->next;
+    }
+    return lf;
+}
 
 void UVCQObject::close_device(uvc_device_handle *devh)
 {

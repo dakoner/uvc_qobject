@@ -20,9 +20,11 @@ public:
     UVCQObject();
     ~UVCQObject();
     QList<uvc_device_t *> find_devices();
+    uvc_error find_device(uvc_device_t **device, int vid, int pid, const char*sn);
     uvc_error open_device(uvc_device_t *device, uvc_device_handle_t **devh);
     void close_device(uvc_device_handle_t *devh);
     QList<FormatAndFrameDescriptors *> *get_formats(uvc_device_handle *devh);
+    uvc_error stream(uvc_device_handle *devh, uvc_frame_format frame_format, int width, int height, int fps);
 
 private:
     uvc_context_t *ctx_;

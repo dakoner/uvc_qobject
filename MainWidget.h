@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "uvc_qobject.h"
+#include <QElapsedTimer>
 
 class QPushButton;
 class QLabel;
@@ -23,9 +24,9 @@ private:
    QPushButton* button_;
    QLabel* label_;
    void cb(uvc_frame *);
-   qint64 previousTime_;
+   QElapsedTimer timer_;
    int size_;
-   double average_;
+   qint64 ns_average_;
 };
 
 #endif // MAINWIDGET_H

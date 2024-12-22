@@ -3,31 +3,29 @@
 #include "MainWidget.h"
 #include "uvc_qobject.h"
 
-
 // Constructor for main widget
-MainWidget::MainWidget(QWidget *parent) :
-    QWidget(parent)
+MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
 {
-   button_ = new QPushButton(tr("Push Me!"));
-   label_ = new QLabel();
+    button_ = new QPushButton(tr("Push Me!"));
+    label_ = new QLabel();
 
-   QGridLayout *mainLayout = new QGridLayout;
-   mainLayout->addWidget(button_,0,0);
-   mainLayout->addWidget(label_,1,0);
-   setLayout(mainLayout);
-   setWindowTitle(tr("Connecting buttons to processes.."));
+    QGridLayout *mainLayout = new QGridLayout;
+    mainLayout->addWidget(button_, 0, 0);
+    mainLayout->addWidget(label_, 1, 0);
+    setLayout(mainLayout);
+    setWindowTitle(tr("Connecting buttons to processes.."));
 
-   size_ = 0;
-   average_ = 0;
-   previousTime_ = QDateTime::currentDateTime().toMSecsSinceEpoch();
-
-   init();
-   QObject::connect(&uvc_qobject_, &UVCQObject::frameChanged,
-                    this, &MainWidget::cb);
+    size_ = 0;
+    ns_average_ = 0;
+    init();
+    timer_.start();
+    QObject::connect(&uvc_qobject_, &UVCQObject::frameChanged,
+                     this, &MainWidget::cb);
 }
 
-void MainWidget::init() {
-   uvc_device_t *dev;
+void MainWidget::init()
+{
+    uvc_device_t *dev;
 
     uvc_error res = uvc_qobject_.find_device(
         &dev,
@@ -42,31 +40,34 @@ void MainWidget::init() {
 
 double addToAverage(double average, int size, double value)
 {
-    printf("average=%5.2f size=%d value=%5.2f", average, size, value);
     double result = (size * average + value) / (size + 1);
-    printf(" result=%5.2f\n", result);
     return result;
 }
 
-void MainWidget::cb(uvc_frame *frame) {
-   qint64 currentTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
-   qint64 delta = currentTime - previousTime_;
-   double fps = 1000./delta;
-   if (!std::isinf(fps)) {
-    average_ = addToAverage(average_, size_, fps);
+qint64 addToAverage_int64(qint64 average, int size, qint64 value)
+{
+    qint64 result = (size * average + value) / (size + 1);
+    return result;
+}
+
+void MainWidget::cb(uvc_frame *frame)
+{
+
+    qint64 dt = timer_.nsecsElapsed();
+    ns_average_ = addToAverage_int64(ns_average_, size_, dt);
+    if (size_ % 120 == 0)
+        printf("fps: %lld\n", (1000*1000*1000/ns_average_));
+    timer_.restart();
     size_++;
-    printf("fps: %5.2f average fps: %5.2f\n", fps, average_);
-   }
-   QImage i((uchar *)frame->data, frame->width, frame->height, QImage::Format::Format_RGB888);
-   QPixmap p = QPixmap::fromImage(i);
-   label_->setPixmap(p);
-   uvc_free_frame(frame);
-   previousTime_ = currentTime;
+    QImage i((uchar *)frame->data, frame->width, frame->height, QImage::Format::Format_RGB888);
+    QPixmap p = QPixmap::fromImage(i);
+    label_->setPixmap(p);
+    uvc_free_frame(frame);
 }
 
 // Destructor
 MainWidget::~MainWidget()
 {
-   delete button_;
-   delete label_;
+    delete button_;
+    delete label_;
 }

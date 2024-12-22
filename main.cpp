@@ -11,20 +11,25 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <signal.h>
 #include <QLabel>
+
+static void sigHandl(int sig)
+{
+    if (sig == 2)
+    {
+        QCoreApplication::quit();
+    }
+}
 int main(int argc, char *argv[])
 {
-    // Creates an instance of QApplication
-    QApplication a(argc, argv);
+    signal(SIGINT, sigHandl);
 
-    // This is our MainWidget class containing our GUI and functionality
+    QApplication a(argc, argv);
     MainWidget w;
-    w.show(); // Show main window
-  
-    // run the application and return execs() return value/code
+    w.show(); 
     return a.exec();
 }
-
 
 //     //     QList<uvc_device_t *> devices = uvc_qobject.find_devices();
 //     //     uvc_device_handle *devh = NULL;

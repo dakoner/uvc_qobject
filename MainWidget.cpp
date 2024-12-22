@@ -1,3 +1,4 @@
+#include <cmath>
 #include <QtWidgets>
 #include "MainWidget.h"
 #include "uvc_qobject.h"
@@ -16,8 +17,11 @@ MainWidget::MainWidget(QWidget *parent) :
    setLayout(mainLayout);
    setWindowTitle(tr("Connecting buttons to processes.."));
 
+   size_ = 0;
+   average_ = 0;
+   previousTime_ = QDateTime::currentDateTime().toMSecsSinceEpoch();
+
    init();
-   
    QObject::connect(&uvc_qobject_, &UVCQObject::frameChanged,
                     this, &MainWidget::cb);
 }
@@ -36,11 +40,23 @@ void MainWidget::init() {
     }
 }
 
+double addToAverage(double average, int size, double value)
+{
+    printf("average=%5.2f size=%d value=%5.2f", average, size, value);
+    double result = (size * average + value) / (size + 1);
+    printf(" result=%5.2f\n", result);
+    return result;
+}
+
 void MainWidget::cb(uvc_frame *frame) {
    qint64 currentTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
    qint64 delta = currentTime - previousTime_;
-   printf("delta: %llu fps: %5.2f\n", delta, 1000./delta);
-
+   double fps = 1000./delta;
+   if (!std::isinf(fps)) {
+    average_ = addToAverage(average_, size_, fps);
+    size_++;
+    printf("fps: %5.2f average fps: %5.2f\n", fps, average_);
+   }
    QImage i((uchar *)frame->data, frame->width, frame->height, QImage::Format::Format_RGB888);
    QPixmap p = QPixmap::fromImage(i);
    label_->setPixmap(p);

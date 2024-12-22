@@ -24,6 +24,8 @@ private:
    QLabel* label_;
    void cb(uvc_frame *);
    qint64 previousTime_;
+   int size_;
+   double average_;
 };
 
 #endif // MAINWIDGET_H

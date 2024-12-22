@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     //             uvc_qobject.close_device(devh);
     //         }
     //     }
+    //     //uvc_qobject.stream(devh, frame_format, 1280, 720, 120 )
 
-    QTimer::singleShot(10000, &app, &QCoreApplication::quit); // Quit after 1 second (1000 milliseconds)
+    QTimer::singleShot(1000, &app, &QCoreApplication::quit); // Quit after 1 second (1000 milliseconds)
     return app.exec();
 }

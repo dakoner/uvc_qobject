@@ -17,7 +17,6 @@ UVCQObject::~UVCQObject()
     puts("UVC exited");
 }
 
-
 uvc_error UVCQObject::find_device(uvc_device_t **device, int vid, int pid, const char *sn)
 {
     uvc_error_t res = uvc_find_device(ctx_, device, vid, pid, sn);
@@ -108,38 +107,26 @@ void UVCQObject::close_device(uvc_device_handle *devh)
     uvc_close(devh);
 }
 
-void cb(uvc_frame *frame, void *ptr)
+void UVCQObject::cb(uvc_frame *frame, void *ptr)
 {
     uvc_frame_t *bgr;
     uvc_error_t ret;
 
-    /* We'll convert the image from YUV/JPEG to BGR, so allocate space */
-    bgr = uvc_allocate_frame(frame->width * frame->height * 3);
-    if (!bgr)
-    {
-        printf("unable to allocate bgr frame!\n");
-        return;
-    }
-
     printf("callback! frame_format = %d, width = %d, height = %d, length = %lu, ptr = %p\n",
            frame->frame_format, frame->width, frame->height, frame->data_bytes, ptr);
-    if (frame->frame_format == UVC_FRAME_FORMAT_H264)
+    if (frame->frame_format == UVC_COLOR_FORMAT_YUYV)
     {
-        /* use `ffplay H264_FILE` to play */
-        /* fp = fopen(H264_FILE, "a");
-         * fwrite(frame->data, 1, frame->data_bytes, fp);
-         * fclose(fp); */
-    }
-    else if (frame->frame_format == UVC_COLOR_FORMAT_MJPEG)
-    {
-        /* sprintf(filename, "%d%s", jpeg_count++, MJPEG_FILE);
-         * fp = fopen(filename, "w");
-         * fwrite(frame->data, 1, frame->data_bytes, fp);
-         * fclose(fp); */
-    }
-    else if (frame->frame_format == UVC_COLOR_FORMAT_YUYV)
-    {
-        /* Do the BGR conversion */
+        if (frame->width * frame->height * 2 != frame->data_bytes)
+        {
+            printf("Invalid frame\n");
+            return;
+        }
+        bgr = uvc_allocate_frame(frame->width * frame->height * 3);
+        if (!bgr)
+        {
+            printf("unable to allocate bgr frame!\n");
+            return;
+        }
         ret = uvc_any2bgr(frame, bgr);
         if (ret)
         {
@@ -147,14 +134,20 @@ void cb(uvc_frame *frame, void *ptr)
             uvc_free_frame(bgr);
             return;
         }
+        ((UVCQObject *)ptr)->updateFrame(bgr);
     }
+}
+
+void UVCQObject::updateFrame(uvc_frame *frame)
+{
+    printf("updateFrame! frame_format = %d, width = %d, height = %d, length = %lu\n",
+           frame->frame_format, frame->width, frame->height, frame->data_bytes);
 }
 
 uvc_error UVCQObject::stream(uvc_device_handle *devh, uvc_frame_format frame_format, int width, int height, int fps)
 {
     uvc_stream_ctrl_t ctrl;
 
-    /* Try to negotiate first stream profile */
     uvc_error res = uvc_get_stream_ctrl_format_size(
         devh, &ctrl, /* result stored in ctrl */
         frame_format,
@@ -174,7 +167,7 @@ uvc_error UVCQObject::stream(uvc_device_handle *devh, uvc_frame_format frame_for
         /* Start the video stream. The library will call user function cb:
          *   cb(frame, (void *) 12345)
          */
-        res = uvc_start_streaming(devh, &ctrl, cb, (void *)12345, 0);
+        res = uvc_start_streaming(devh, &ctrl, &UVCQObject::cb, this, 0);
 
         if (res < 0)
         {

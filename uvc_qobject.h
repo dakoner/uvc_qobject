@@ -25,6 +25,8 @@ public:
     void close_device(uvc_device_handle_t *devh);
     QList<FormatAndFrameDescriptors *> *get_formats(uvc_device_handle *devh);
     uvc_error stream(uvc_device_handle *devh, uvc_frame_format frame_format, int width, int height, int fps);
+    static void cb(uvc_frame *frame, void *ptr);
+    void updateFrame(uvc_frame *frame);
 
 private:
     uvc_context_t *ctx_;

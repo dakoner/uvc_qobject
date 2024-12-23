@@ -31,10 +31,21 @@ source_group("Header Files" FILES ${HEADERS})
 source_group("Source Files" FILES ${SOURCES})
 
 
-add_executable(${PROJECT} ${HEADERS} ${SOURCES} ${QT_RESOURCES})
+qt_add_library(lib${PROJECT} STATIC uvc_qobject.cpp uvc_qobject.h ${QT_RESOURCES})
+
+target_link_libraries(lib${PROJECT}
+    PRIVATE
+    Qt6::Core
+    usb
+    uvc
+    jpeg
+    )
+
+qt_add_executable(${PROJECT} main.cpp MainWidget.cpp MainWidget.h ${QT_RESOURCES})
 
 target_link_libraries(${PROJECT}
     PRIVATE
+    lib${PROJECT}
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
@@ -43,9 +54,3 @@ target_link_libraries(${PROJECT}
     jpeg
     )
 
-
-install(TARGETS ${PROJECT}
-    BUNDLE  DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)

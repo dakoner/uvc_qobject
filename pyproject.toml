@@ -1,0 +1,20 @@
+
+# Specify sip v5 as the build system for the package.
+[build-system]
+requires = ["sip >=5, <6"]
+build-backend = "sipbuild.api"
+
+# Sip project
+[tool.sip.project]
+sip-include-dirs = ["/usr/lib/python3/dist-packages/PyQt6/bindings"]
+
+# Specify the PEP 566 metadata for the project.
+[project]
+name = "uvc_qobject"
+
+# Configure the building of the Operations bindings.
+[tool.sip.bindings.uvc_qobject]
+headers = ["Operations.h"]
+include-dirs = [".", "/usr/include/x86_64-linux-gnu/qt6/", "/usr/include/x86_64-linux-gnu/qt6/QtCore/"]
+libraries = ["uvc_qobject"]
+library-dirs = ["release"]

@@ -24,7 +24,7 @@ private:
    QPushButton* button_;
    QLabel* label_;
    void cb(uvc_frame *);
-   QElapsedTimer timer_;
+   QElapsedTimer fps_timer_;
    int size_;
    qint64 ns_average_;
 };

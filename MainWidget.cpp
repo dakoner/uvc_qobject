@@ -18,7 +18,7 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     size_ = 0;
     ns_average_ = 0;
     init();
-    timer_.start();
+    fps_timer_.start();
     QObject::connect(&uvc_qobject_, &UVCQObject::frameChanged,
                      this, &MainWidget::cb);
 }
@@ -38,6 +38,7 @@ void MainWidget::init()
     }
 }
 
+
 double addToAverage(double average, int size, double value)
 {
     double result = (size * average + value) / (size + 1);
@@ -53,11 +54,11 @@ qint64 addToAverage_int64(qint64 average, int size, qint64 value)
 void MainWidget::cb(uvc_frame *frame)
 {
 
-    qint64 dt = timer_.nsecsElapsed();
+    qint64 dt = fps_timer_.nsecsElapsed();
     ns_average_ = addToAverage_int64(ns_average_, size_, dt);
     if (size_ % 120 == 0)
         printf("fps: %lld\n", (1000*1000*1000/ns_average_));
-    timer_.restart();
+    fps_timer_.restart();
     size_++;
     QImage i((uchar *)frame->data, frame->width, frame->height, QImage::Format::Format_RGB888);
     QPixmap p = QPixmap::fromImage(i);

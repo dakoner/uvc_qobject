@@ -1,20 +1,34 @@
-
 # Specify sip v5 as the build system for the package.
 [build-system]
-requires = ["sip >=5, <6"]
+requires = ["sip == 6.8.3", "PyQt-builder >=1.10, <2"]
 build-backend = "sipbuild.api"
 
 # Sip project
 [tool.sip.project]
 sip-include-dirs = ["/usr/lib/python3/dist-packages/PyQt6/bindings"]
+abi-version="13.6"
+
+[tool.sip.builder]
+qmake="/usr/lib/qt6/bin/qmake"
+#jobs=1
+
+# Specify a PyQt-based project.
+[tool.sip]
+project-factory = "pyqtbuild:PyQtProject"
 
 # Specify the PEP 566 metadata for the project.
 [project]
-name = "uvc_qobject"
+name = "UVCQObject"
+dependencies = ["PyQt6 (==6.6.1)"]
 
-# Configure the building of the Operations bindings.
-[tool.sip.bindings.uvc_qobject]
-headers = ["Operations.h"]
+# Configure the building of the uvc_qobject bindings.
+[tool.sip.bindings.UVCQObject]
+headers = ["uvc_qobject.h"]
 include-dirs = [".", "/usr/include/x86_64-linux-gnu/qt6/", "/usr/include/x86_64-linux-gnu/qt6/QtCore/"]
-libraries = ["uvc_qobject"]
-library-dirs = ["release"]
+libraries = ["uvc_qobject",  "uvc", "Qt6Core"]
+library-dirs = ["build"]
+
+#latest problem: can't compile because I switched to using the pip version of pyqt6 (because I had issues with using the ubuntu sip + pyqt6 in a virtualenv, since using a virtualenv hides the syspath holding the ubuntu pyqt6 install) and pip doesn't include the headers
+#maybe need to download Qt version equiavlent to my .so's?  
+# going back to ubuntu sip + pyqt6, used pip --break-system-packages to install into the system dir, then get:
+# RuntimeError: the PyQt6.QtCore module failed to register with the sip module

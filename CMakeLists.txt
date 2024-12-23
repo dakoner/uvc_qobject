@@ -40,13 +40,5 @@ target_link_libraries(${PROJECT}
     jpeg
     )
 
-qt_add_executable(main main.cpp MainWidget.cpp MainWidget.h ${QT_RESOURCES})
-
-target_link_libraries(main
-    PRIVATE
-    ${PROJECT}
-    Qt6::Gui
-    Qt6::Widgets
-
-    )
+add_subdirectory(app)
 

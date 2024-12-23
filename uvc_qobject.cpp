@@ -147,26 +147,24 @@ uvc_error UVCQObject::stream(uvc_device_handle *devh, uvc_frame_format frame_for
         width, height, fps /* width, height, fps */
     );
 
-    /* Print out the result */
-    uvc_print_stream_ctrl(&ctrl, stderr);
 
     if (res < 0)
     {
-        uvc_perror(res, "get_mode"); /* device doesn't provide a matching stream */
+        uvc_perror(res, "uvc_get_stream_ctrl_format_size"); /* device doesn't provide a matching stream */
+        return res;
     }
+    
+    /* Print out the result */
+    uvc_print_stream_ctrl(&ctrl, stderr);
+    
+    res = uvc_start_streaming(devh, &ctrl, &UVCQObject::cb, this, 0);
 
-    else
+    if (res < 0)
     {
-        /* Start the video stream. The library will call user function cb:
-         *   cb(frame, (void *) 12345)
-         */
-        res = uvc_start_streaming(devh, &ctrl, &UVCQObject::cb, this, 0);
-
-        if (res < 0)
-        {
-            uvc_perror(res, "start_streaming"); /* unable to start stream */
-            return res;
-        }
+        
+        uvc_perror(res, "start_streaming"); /* unable to start stream */
+        return res;
     }
+    
     return UVC_SUCCESS;
 }

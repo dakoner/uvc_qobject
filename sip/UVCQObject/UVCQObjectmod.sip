@@ -10,6 +10,7 @@ const char *UVCQOBJECT_VERSION_STR;
 %ModuleCode
 static int UVCQOBJECT_VERSION = 0x060402;
 static const char *UVCQOBJECT_VERSION_STR = "6.4.2";
+
 %End
 
 
@@ -17,8 +18,16 @@ class UVCQObject: QObject {
 
 %TypeHeaderCode
 #include "uvc_qobject.h"
+#include <QList>
+
+%End
+%TypeCode
+
 %End
 public:
     UVCQObject();
+    struct ::uvc_device;
+    QList<::uvc_device *> find_devices();
+
 
 };

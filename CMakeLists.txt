@@ -20,5 +20,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt6Widgets_EXECUTABLE_COMPILE_FLAGS} -
 add_subdirectory(UVCObject)
 add_subdirectory(simple_app)
 add_subdirectory(UVCQObject)
-#add_subdirectory(src)
-#add_subdirectory(app)
+add_subdirectory(app)

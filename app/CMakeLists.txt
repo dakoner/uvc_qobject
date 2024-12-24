@@ -1,11 +1,12 @@
-qt_add_executable(main main.cpp MainWidget.cpp MainWidget.h ${QT_RESOURCES})
-include_directories(../src)
+qt_add_executable(app main.cpp MainWidget.cpp MainWidget.h ${QT_RESOURCES})
+include_directories(../UVCQObject)
 
-target_link_libraries(main
+target_link_libraries(app
+    PUBLIC
+    UVCQObject
     PRIVATE
-    ${PROJECT}
     Qt6::Gui
     Qt6::Widgets
     )
 
-target_include_directories(main PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
+target_include_directories(app PRIVATE ${Qt6Widgets_INCLUDE_DIRS})

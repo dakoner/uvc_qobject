@@ -18,6 +18,9 @@ UVCDeviceHandle::UVCDeviceHandle(uvc_device_handle_t *device_handle) : device_ha
 {
 }
 
+UVCFrame::UVCFrame(uvc_frame *frame, void* user_ptr): frame_(frame), user_ptr_(user_ptr) {
+}
+
 UVCObject::UVCObject()
 {
     ::uvc_error res = ::uvc_init(&ctx_, NULL);
@@ -129,37 +132,7 @@ void UVCObject::close_device(UVCDeviceHandle &device_handle)
     puts("Device closed");
 }
 
-void UVCObject::cb(::uvc_frame *frame, void *ptr)
-{
-    ::uvc_frame_t *bgr;
-    ::uvc_error_t ret;
-
-    if (frame->frame_format == UVC_COLOR_FORMAT_YUYV)
-    {
-        if (frame->width * frame->height * 2 != frame->data_bytes)
-        {
-            printf("Invalid frame\n");
-            return;
-        }
-        bgr = ::uvc_allocate_frame(frame->width * frame->height * 3);
-        if (!bgr)
-        {
-            printf("unable to allocate bgr frame!\n");
-            return;
-        }
-        ret = ::uvc_any2bgr(frame, bgr);
-        if (ret)
-        {
-            ::uvc_perror(ret, "::uvc_any2bgr");
-            ::uvc_free_frame(bgr);
-            return;
-        }
-        ::uvc_free_frame(bgr);
-        printf("Frame!\n");
-    }
-}
-
-void UVCObject::stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_format, int width, int height, int fps)
+void UVCObject::stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_format, int width, int height, int fps)// , UVCFrameCallback* cb, void *user_data)
 {
     ::uvc_stream_ctrl_t ctrl;
 
@@ -178,6 +151,8 @@ void UVCObject::stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_forma
     /* Print out the result */
     ::uvc_print_stream_ctrl(&ctrl, stderr);
 
+    // cb_ = cb;
+    // user_data_ = user_data;
     res = ::uvc_start_streaming(device_handle.device_handle_, &ctrl, &UVCObject::cb, this, 0);
 
     if (res < 0)
@@ -186,4 +161,12 @@ void UVCObject::stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_forma
         ::uvc_perror(res, "start_streaming"); /* unable to start stream */
         throw std::runtime_error("Failed to start streaming");
     }
+}
+
+void UVCObject::cb(uvc_frame_t *frame, void *user_data) {
+    UVCObject *this_ = (UVCObject *)user_data;
+    UVCFrame *frame_ = new UVCFrame(frame, NULL);
+    printf("Callback: %p %p\n", (void *)this_, (void *)frame_);
+    
+    //this_->cb_(frame_, NULL);
 }

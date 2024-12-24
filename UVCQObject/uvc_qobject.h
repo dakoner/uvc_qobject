@@ -4,15 +4,37 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 #include <QTimer>
-#include "libuvc/libuvc.h"
+#include "../UVCObject/uvc_object.h"
 
-class FormatAndFrameDescriptors
+class QUVCDevice 
 {
 public:
-    ::uvc_device_handle *devh;
-    ::uvc_format_desc_t const *format_desc;
-    QList<::uvc_frame_desc_t const *> frame_desc;
+    QUVCDevice();
+    QUVCDevice(UVCDevice *device);
+    UVCDevice *device_;
+
 };
+
+class QUVCDeviceHandle
+{
+    public:
+
+    QUVCDeviceHandle();
+    QUVCDeviceHandle(UVCDeviceHandle *device_handle);
+    UVCDeviceHandle *device_handle_;
+};
+
+typedef UVCFrameFormat QUVCFrameFormat;
+
+
+class QUVCFrame {
+    public:
+    QUVCFrame(UVCFrame *frame);
+    UVCFrame *frame_;
+};
+
+
+// typedef void(QUVCFrameCallback(UVCFrameCallback *cb));
 
 class UVCQObject : public QObject
 {
@@ -21,18 +43,20 @@ class UVCQObject : public QObject
 public:
     UVCQObject();
     ~UVCQObject();
-    QList<::uvc_device_t *> find_devices();
-    uvc_error find_device(::uvc_device_t **device, int vid, int pid, const char *sn);
-    uvc_error open_device(::uvc_device_t *device, ::uvc_device_handle_t **devh);
-    void close_device(::uvc_device_handle_t *devh);
-    QList<FormatAndFrameDescriptors *> *get_formats(::uvc_device_handle *devh);
-    uvc_error stream(::uvc_device_handle *devh, ::uvc_frame_format frame_format, int width, int height, int fps);
-    static void cb(::uvc_frame *frame, void *ptr);
+    void find_device(QUVCDevice *device, int vid, int pid, const char *sn);
+    QList<QUVCDevice> find_devices();
+    void open_device(QUVCDevice &device, QUVCDeviceHandle *devh);
+    void close_device(QUVCDeviceHandle &device_handle_);
+    // std::list<FormatAndFrameDescriptors *> *get_formats(::uvc_device_handle *devh);
+    void stream(QUVCDeviceHandle &device_handle, QUVCFrameFormat frame_format, int width, int height, int fps);
+    // static void cb(QUVCFrame *frame, void *user_data);
 
 private:
-    ::uvc_context_t *ctx_;
+    UVCObject *uvc_object_;
+    // QUVCFrameCallback *cb_;
+
 signals:
-    void frameChanged(::uvc_frame *frame);
+    void frameChanged(QUVCFrame *frame);
 };
 
 #endif // !_UVC_THREAD_H

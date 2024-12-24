@@ -13,6 +13,7 @@ qt_add_library(UVCQObject STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
 
 target_link_libraries(UVCQObject
     PUBLIC
+    UVCObject
     Qt6::Core
     usb
     uvc

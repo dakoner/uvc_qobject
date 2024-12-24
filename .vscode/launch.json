@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/build/uvc_camera_qobject",
+            "program": "${fileDirname}/../build/app/app",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -28,6 +28,5 @@
                 }
             ]
         }
-
     ]
 }

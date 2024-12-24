@@ -1,9 +1,9 @@
-add_executable(main main.cpp ${QT_RESOURCES})
+add_executable(simple_app main.cpp ${QT_RESOURCES})
 include_directories(../UVCObject)
 
-target_link_libraries(main
+target_link_libraries(simple_app
     PRIVATE
     UVCObject
     )
 
-target_include_directories(main PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
+target_include_directories(simple_app PRIVATE ${Qt6Widgets_INCLUDE_DIRS})

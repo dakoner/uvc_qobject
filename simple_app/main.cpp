@@ -13,6 +13,38 @@ static void sigHandl(int sig)
         _exit(1);
     }
 }
+
+void cb(UVCFrame *f, void *ptr)
+{
+    uvc_frame_t *frame = f->frame_;
+    printf("Frame!\n");
+    ::uvc_frame_t *bgr; 
+    ::uvc_error_t ret;
+    if (frame->frame_format == UVC_COLOR_FORMAT_YUYV)
+    {
+        if (frame->width * frame->height * 2 != frame->data_bytes)
+        {
+            printf("Invalid frame\n");
+            return;
+        }
+        bgr = ::uvc_allocate_frame(frame->width * frame->height * 3);
+        if (!bgr)
+        {
+            printf("unable to allocate bgr frame!\n");
+            return;
+        }
+        ret = ::uvc_any2bgr(frame, bgr);
+        if (ret)
+        {
+            ::uvc_perror(ret, "::uvc_any2bgr");
+            ::uvc_free_frame(bgr);
+            return;
+        }
+        ::uvc_free_frame(bgr);
+    }
+}
+
+
 int main(int argc, char *argv[])
 {
     signal(SIGINT, sigHandl);
@@ -26,7 +58,8 @@ int main(int argc, char *argv[])
     UVCDeviceHandle device_handle;
     uvc_object.open_device(device, &device_handle);
     UVCFrameFormat format = UVC_FRAME_FORMAT_YUYV;
-    uvc_object.stream(device_handle, format, 1280, 720, 120);
+    uvc_object.stream(device_handle, format, 1280, 720, 120);//, &cb, (void *)&uvc_object);
+
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     uvc_object.close_device(device_handle);
 }

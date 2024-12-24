@@ -9,9 +9,9 @@ endif()
 source_group("Header Files" FILES ${HEADERS})
 source_group("Source Files" FILES ${SOURCES})
 
-add_library(${PROJECT} STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
+add_library(UVCObject STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
 
-target_link_libraries(${PROJECT}
+target_link_libraries(UVCObject
     PUBLIC
     usb
     uvc

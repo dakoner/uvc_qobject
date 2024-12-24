@@ -1,4 +1,3 @@
-
 if(NOT DEFINED HEADERS)
     file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 endif()
@@ -10,9 +9,9 @@ endif()
 source_group("Header Files" FILES ${HEADERS})
 source_group("Source Files" FILES ${SOURCES})
 
-qt_add_library(${PROJECT} STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
+qt_add_library(UVCQObject STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
 
-target_link_libraries(${PROJECT}
+target_link_libraries(UVCQObject
     PUBLIC
     Qt6::Core
     usb

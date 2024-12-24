@@ -2,7 +2,7 @@
 #define MAINWIDGET_H
 
 #include <QWidget>
-#include "uvc_qobject.h"
+#include "QUVCObject.h"
 #include <QElapsedTimer>
 
 class QPushButton;
@@ -20,7 +20,7 @@ public:
     void test(QPixmap);
     void init(void);
 private:
-   UVCQObject uvc_qobject_;
+   QUVCObject QUVCObject_;
    QPushButton* button_;
    QLabel* label_;
    void cb(UVCFrame *);

@@ -1,5 +1,5 @@
-#ifndef _UVC_QOBJECT_H
-#define _UVC_QOBJECT_H
+#ifndef _QUVCObject_H
+#define _QUVCObject_H
 
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
@@ -32,13 +32,13 @@ class UVCFrame {
     uvc_frame *frame_;
 };
 
-class UVCQObject : public QObject
+class QUVCObject : public QObject
 {
     Q_OBJECT
 
 public:
-    UVCQObject();
-    ~UVCQObject();
+    QUVCObject();
+    ~QUVCObject();
     void find_device(UVCDevice *device, int vid, int pid, const char *sn);
     void open_device(UVCDevice &device, UVCDeviceHandle *devh);
     void close_device(UVCDeviceHandle &device_handle_);
@@ -52,4 +52,4 @@ signals:
     void frameChanged(UVCFrame *frame);
 };
 
-#endif // !_UVC_QOBJECT_H
+#endif // !_QUVCObject_H

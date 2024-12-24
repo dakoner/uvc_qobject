@@ -9,9 +9,9 @@ endif()
 source_group("Header Files" FILES ${HEADERS})
 source_group("Source Files" FILES ${SOURCES})
 
-qt_add_library(UVCQObject STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
+qt_add_library(QUVCObject STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
 
-target_link_libraries(UVCQObject
+target_link_libraries(QUVCObject
     PUBLIC
     Qt6::Core
     usb

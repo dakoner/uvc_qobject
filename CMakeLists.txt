@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-set(PROJECT "uvc_qobject")
+set(PROJECT "QUVCObject")
 
 project(${PROJECT} LANGUAGES CXX)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
@@ -19,5 +19,5 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt6Widgets_EXECUTABLE_COMPILE_FLAGS} -
 
 #add_subdirectory(UVCObject)
 #add_subdirectory(simple_app)
-add_subdirectory(UVCQObject)
+add_subdirectory(QUVCObject)
 add_subdirectory(app)

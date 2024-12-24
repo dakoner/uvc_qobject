@@ -1,9 +1,9 @@
 qt_add_executable(app main.cpp MainWidget.cpp MainWidget.h ${QT_RESOURCES})
-include_directories(../UVCQObject)
+include_directories(../QUVCObject)
 
 target_link_libraries(app
     PUBLIC
-    UVCQObject
+    QUVCObject
     PRIVATE
     Qt6::Gui
     Qt6::Widgets

@@ -13,11 +13,11 @@ qmake="/usr/lib/qt6/bin/qmake"
 project-factory = "pyqtbuild:PyQtProject"
 
 [project]
-name = "UVCQObject"
+name = "QUVCObject"
 dependencies = ["PyQt6 (==6.6.1)"]
 
-[tool.sip.bindings.UVCQObject]
-headers = ["uvc_qobject.h"]
+[tool.sip.bindings.QUVCObject]
+headers = ["QUVCObject.h"]
 include-dirs = ["src", "/usr/include/x86_64-linux-gnu/qt6/", "/usr/include/x86_64-linux-gnu/qt6/QtCore/"]
-libraries = ["uvc_qobject",  "uvc", "Qt6Core"]
+libraries = ["QUVCObject",  "uvc", "Qt6Core"]
 library-dirs = ["build"]

@@ -1,7 +1,7 @@
 #include <cmath>
 #include <QtWidgets>
 #include "MainWidget.h"
-#include "uvc_qobject.h"
+#include "QUVCObject.h"
 
 // Constructor for main widget
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
@@ -19,7 +19,7 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     ns_average_ = 0;
     init();
     fps_timer_.start();
-    QObject::connect(&uvc_qobject_, &UVCQObject::frameChanged,
+    QObject::connect(&QUVCObject_, &QUVCObject::frameChanged,
                      this, &MainWidget::cb);
 }
 
@@ -27,13 +27,13 @@ void MainWidget::init()
 {
     UVCDevice device;
 
-    uvc_qobject_.find_device(
+    QUVCObject_.find_device(
         &device,
         0x4b4, 0x477, 0); /* filter devices: vendor_id, product_id, "serial_num" */
     UVCDeviceHandle device_handle;
-    uvc_qobject_.open_device(device, &device_handle);
+    QUVCObject_.open_device(device, &device_handle);
     UVCFrameFormat format = UVC_FRAME_FORMAT_YUYV;
-    uvc_qobject_.stream(device_handle, format, 1280, 720, 120);
+    QUVCObject_.stream(device_handle, format, 1280, 720, 120);
     // uvc_object.close_device(device_handle);
 }
 

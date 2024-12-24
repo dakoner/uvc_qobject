@@ -1,5 +1,5 @@
 #include "libuvc/libuvc.h"
-#include "uvc_qobject.h"
+#include "QUVCObject.h"
 
 #include <QCoreApplication>
 #include <QTimer>
@@ -7,7 +7,7 @@
 #include <QApplication>
 #include "MainWidget.h"
 #include "libuvc/libuvc.h"
-#include "uvc_qobject.h"
+#include "QUVCObject.h"
 #include <stdio.h>
 #include <unistd.h>
 

@@ -1,80 +1,119 @@
 #include "uvc_qobject.h"
 
 
-QUVCDevice::QUVCDevice(UVCDevice *device): device_(device) {
-
-}
-
-
-QUVCDevice::QUVCDevice(): device_(new UVCDevice) {
-
-}
-
-
-QUVCDeviceHandle::QUVCDeviceHandle(UVCDeviceHandle *device_handle): device_handle_(device_handle) {
-
-}
-
-
-QUVCDeviceHandle::QUVCDeviceHandle(): device_handle_(new UVCDeviceHandle) {
-
-}
-
-QUVCFrame::QUVCFrame(UVCFrame *frame): frame_(frame) {
-
-}
-
-
-UVCQObject::UVCQObject(): uvc_object_(new UVCObject)
+UVCDevice::UVCDevice() : device_(NULL)
 {
+}
+
+UVCDevice::UVCDevice(uvc_device_t *device) : device_(device)
+{
+}
+
+UVCDeviceHandle::UVCDeviceHandle() : device_handle_(NULL)
+{
+}
+
+UVCDeviceHandle::UVCDeviceHandle(uvc_device_handle_t *device_handle) : device_handle_(device_handle)
+{
+}
+
+UVCFrame::UVCFrame(uvc_frame *frame): frame_(frame) {
+}
+
+UVCQObject::UVCQObject()
+{
+    ::uvc_error res = ::uvc_init(&ctx_, NULL);
+
+    if (res < 0)
+    {
+        ::uvc_perror(res, "::uvc_init");
+        throw std::runtime_error("Failed to initialize");
+    }
 }
 
 UVCQObject::~UVCQObject()
 {
-    delete(uvc_object_);
+     ::uvc_exit(ctx_);
+    puts("UVC exited");
 }
 
-void UVCQObject::find_device(QUVCDevice *device, int vid, int pid, const char *sn)
+
+
+void UVCQObject::find_device(UVCDevice *device, int vid, int pid, const char *sn)
 {
-    UVCDevice *d = new UVCDevice;
-    uvc_object_->find_device(d, vid, pid, sn);
-    device->device_ = d;
+    uvc_device_t *d;
+    ::uvc_error_t res = ::uvc_find_device(ctx_, &d, vid, pid, sn);
+    if (res < 0)
+    {
+        ::uvc_perror(res, "::uvc_find_devices"); /* no devices found */
+        throw std::runtime_error("Failed to find deevice");
+    }
+    else
+    {
+        device->device_ = d;
+        puts("Devices found");
+    }
 }
 
-QList<QUVCDevice> UVCQObject::find_devices()
+void UVCQObject::open_device(UVCDevice &device, UVCDeviceHandle *devh)
 {
-    // std::list<UVCDevice> devices = uvc_object_->find_devices();
-    QList<QUVCDevice> qdevices;
-    // for( auto di = devices.begin(); di != devices.end(); di++) {
-    //     qdevices.push_back(QUVCDevice(di->device_))
-    // }
-    // (devices.begin(), devices.end());
+    /* Try to open the device: requires exclusive access */
+    uvc_device_handle_t *device_handle;
+    ::uvc_error_t res = ::uvc_open(device.device_, &device_handle);
 
-    return qdevices;
+    if (res < 0)
+    {
+        ::uvc_perror(res, "::uvc_open"); /* unable to open device */
+        throw std::runtime_error("Failed to open device");
+    }
+    else
+    {
+        devh->device_handle_ = device_handle;
+        puts("Device opened");
+    }
 }
 
-void UVCQObject::open_device(QUVCDevice &device, QUVCDeviceHandle *device_handle)
+
+void UVCQObject::stream(UVCDeviceHandle &device_handle, UVCFrameFormat frame_format, int width, int height, int fps)
 {
-    UVCDeviceHandle *dh = new UVCDeviceHandle();
-    uvc_object_->open_device(*device.device_, dh);
-    device_handle->device_handle_ = dh;
+    ::uvc_stream_ctrl_t ctrl;
+
+    ::uvc_error res = ::uvc_get_stream_ctrl_format_size(
+        device_handle.device_handle_, &ctrl, /* result stored in ctrl */
+        frame_format,
+        width, height, fps /* width, height, fps */
+    );
+
+    if (res < 0)
+    {
+        ::uvc_perror(res, "::uvc_get_stream_ctrl_format_size"); /* device doesn't provide a matching stream */
+        throw std::runtime_error("Failed to get matching format");
+    }
+
+    /* Print out the result */
+    ::uvc_print_stream_ctrl(&ctrl, stderr);
+
+    res = ::uvc_start_streaming(device_handle.device_handle_, &ctrl, &UVCQObject::cb, this, 0);
+
+    if (res < 0)
+    {
+
+        ::uvc_perror(res, "start_streaming"); /* unable to start stream */
+        throw std::runtime_error("Failed to start streaming");
+    }
 }
 
-void UVCQObject::close_device(QUVCDeviceHandle &device_handle)
+void UVCQObject::close_device(UVCDeviceHandle &device_handle)
 {
-    uvc_object_->close_device(*device_handle.device_handle_);
+    ::uvc_close(device_handle.device_handle_);
+    puts("Device closed");
 }
 
-void UVCQObject::stream(QUVCDeviceHandle &device_handle, QUVCFrameFormat frame_format, int width, int height, int fps)
-{
-    uvc_object_->stream(*device_handle.device_handle_, frame_format, width, height, fps, &UVCQObject::cb, this);
-}
 
-void UVCQObject::cb(UVCFrame *frame, void* user_data) {
+void UVCQObject::cb(uvc_frame_t *frame, void* user_data) {
     printf("Got UVCQObject cb\n");
     // signal data
-    QUVCFrame *qf = new QUVCFrame(frame);
-
+    UVCFrame *uframe = new UVCFrame(frame);
     UVCQObject *this_ = (UVCQObject*)user_data;
-    emit this_->frameChanged(qf);
+    emit this_->frameChanged(uframe);
 }

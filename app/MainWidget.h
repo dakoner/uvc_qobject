@@ -23,7 +23,7 @@ private:
    UVCQObject uvc_qobject_;
    QPushButton* button_;
    QLabel* label_;
-   void cb(uvc_frame *);
+   void cb(UVCFrame *);
    QElapsedTimer fps_timer_;
    int size_;
    qint64 ns_average_;

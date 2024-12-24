@@ -4,39 +4,32 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 #include <QTimer>
-#include "../UVCObject/uvc_object.h"
+#include "libuvc/libuvc.h"
 
-class QUVCDevice
+
+typedef uvc_frame_format UVCFrameFormat;
+
+
+class UVCDevice
 {
 public:
-    QUVCDevice();
-    QUVCDevice(UVCDevice *device);
-    UVCDevice *device_;
+    uvc_device_t *device_;
+    UVCDevice();
+    UVCDevice(uvc_device_t *device);
 };
 
-class QUVCDeviceHandle
+class UVCDeviceHandle
 {
 public:
-    QUVCDeviceHandle();
-    QUVCDeviceHandle(UVCDeviceHandle *device_handle);
-    UVCDeviceHandle *device_handle_;
+    uvc_device_handle_t *device_handle_;
+    UVCDeviceHandle();
+    UVCDeviceHandle(uvc_device_handle_t *device_handle);
 };
 
-typedef UVCFrameFormat QUVCFrameFormat;
-
-class QUVCFrame
-{
-public:
-    QUVCFrame(UVCFrame *frame);
-    UVCFrame *frame_;
-};
-
-typedef void(QUVCFrameCallback(UVCFrame *frame, void *user_data));
-
-struct QUVCCallbackAndData
-{
-    QUVCFrameCallback *cb;
-    void *user_data;
+class UVCFrame {
+    public:
+    UVCFrame(uvc_frame *frame);
+    uvc_frame *frame_;
 };
 
 class UVCQObject : public QObject
@@ -46,20 +39,17 @@ class UVCQObject : public QObject
 public:
     UVCQObject();
     ~UVCQObject();
-    void find_device(QUVCDevice *device, int vid, int pid, const char *sn);
-    QList<QUVCDevice> find_devices();
-    void open_device(QUVCDevice &device, QUVCDeviceHandle *devh);
-    void close_device(QUVCDeviceHandle &device_handle_);
-    // std::list<FormatAndFrameDescriptors *> *get_formats(::uvc_device_handle *devh);
-    void stream(QUVCDeviceHandle &device_handle, QUVCFrameFormat frame_format, int width, int height, int fps);
-    static void cb(UVCFrame *frame, void *user_data);
+    void find_device(UVCDevice *device, int vid, int pid, const char *sn);
+    void open_device(UVCDevice &device, UVCDeviceHandle *devh);
+    void close_device(UVCDeviceHandle &device_handle_);
+    void stream(UVCDeviceHandle &device_handle, UVCFrameFormat frame_format, int width, int height, int fps);
+    static void cb(uvc_frame_t *frame, void *user_data);
 
 private:
-    UVCObject *uvc_object_;
-    QUVCCallbackAndData *cb_and_data_;
+    ::uvc_context_t *ctx_;
 
 signals:
-    void frameChanged(QUVCFrame *frame);
+    void frameChanged(UVCFrame *frame);
 };
 
 #endif // !_UVC_QOBJECT_H

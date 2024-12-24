@@ -19,21 +19,21 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     ns_average_ = 0;
     init();
     fps_timer_.start();
-    // QObject::connect(&uvc_qobject_, &UVCQObject::frameChanged,
-    //                  this, &MainWidget::cb);
+    QObject::connect(&uvc_qobject_, &UVCQObject::frameChanged,
+                     this, &MainWidget::cb);
 }
 
 void MainWidget::init()
 {
-    QUVCDevice device;
+    UVCDevice device;
 
     uvc_qobject_.find_device(
         &device,
         0x4b4, 0x477, 0); /* filter devices: vendor_id, product_id, "serial_num" */
-    QUVCDeviceHandle device_handle;
+    UVCDeviceHandle device_handle;
     uvc_qobject_.open_device(device, &device_handle);
-    QUVCFrameFormat format = UVC_FRAME_FORMAT_YUYV;
-    uvc_qobject_.stream(device_handle, format, 1280, 720, 120, &UVCQObject::cb, this)
+    UVCFrameFormat format = UVC_FRAME_FORMAT_YUYV;
+    uvc_qobject_.stream(device_handle, format, 1280, 720, 120);
     // uvc_object.close_device(device_handle);
 }
 
@@ -50,9 +50,9 @@ qint64 addToAverage_int64(qint64 average, int size, qint64 value)
     return result;
 }
 
-void MainWidget::cb(uvc_frame *frame)
+void MainWidget::cb(UVCFrame *frame)
 {
-
+    printf("Main widget got frame\n");
     // qint64 dt = fps_timer_.nsecsElapsed();
     // ns_average_ = addToAverage_int64(ns_average_, size_, dt);
     // if (size_ % 120 == 0)

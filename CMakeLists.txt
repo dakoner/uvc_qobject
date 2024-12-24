@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt6Widgets_EXECUTABLE_COMPILE_FLAGS} -Wall -Werror  -fstrict-aliasing -pedantic-errors -pedantic -Wno-deprecated-declarations -Wno-unused-variable")
 
-add_subdirectory(UVCObject)
-add_subdirectory(simple_app)
+#add_subdirectory(UVCObject)
+#add_subdirectory(simple_app)
 add_subdirectory(UVCQObject)
 add_subdirectory(app)

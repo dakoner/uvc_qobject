@@ -33,14 +33,8 @@ void MainWidget::init()
     QUVCDeviceHandle device_handle;
     uvc_qobject_.open_device(device, &device_handle);
     QUVCFrameFormat format = UVC_FRAME_FORMAT_YUYV;
-    uvc_qobject_.stream(device_handle, format, 1280, 720, 120); //, NULL);
+    uvc_qobject_.stream(device_handle, format, 1280, 720, 120, &UVCQObject::cb, this)
     // uvc_object.close_device(device_handle);
-
-    // if (uvc_qobject_.open_device(device, &devh) == UVC_SUCCESS)
-    // {
-    //     uvc_frame_format frame_format = UVC_FRAME_FORMAT_YUYV;
-    //     uvc_qobject_.stream(devh, frame_format, 1280, 720, 120);
-    // }
 }
 
 

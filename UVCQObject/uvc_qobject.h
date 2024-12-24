@@ -1,24 +1,22 @@
-#ifndef _UVC_THREAD_H
-#define _UVC_THREAD_H
+#ifndef _UVC_QOBJECT_H
+#define _UVC_QOBJECT_H
 
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 #include <QTimer>
 #include "../UVCObject/uvc_object.h"
 
-class QUVCDevice 
+class QUVCDevice
 {
 public:
     QUVCDevice();
     QUVCDevice(UVCDevice *device);
     UVCDevice *device_;
-
 };
 
 class QUVCDeviceHandle
 {
-    public:
-
+public:
     QUVCDeviceHandle();
     QUVCDeviceHandle(UVCDeviceHandle *device_handle);
     UVCDeviceHandle *device_handle_;
@@ -26,15 +24,20 @@ class QUVCDeviceHandle
 
 typedef UVCFrameFormat QUVCFrameFormat;
 
-
-class QUVCFrame {
-    public:
+class QUVCFrame
+{
+public:
     QUVCFrame(UVCFrame *frame);
     UVCFrame *frame_;
 };
 
+typedef void(QUVCFrameCallback(UVCFrame *frame, void *user_data));
 
-// typedef void(QUVCFrameCallback(UVCFrameCallback *cb));
+struct QUVCCallbackAndData
+{
+    QUVCFrameCallback *cb;
+    void *user_data;
+};
 
 class UVCQObject : public QObject
 {
@@ -49,14 +52,14 @@ public:
     void close_device(QUVCDeviceHandle &device_handle_);
     // std::list<FormatAndFrameDescriptors *> *get_formats(::uvc_device_handle *devh);
     void stream(QUVCDeviceHandle &device_handle, QUVCFrameFormat frame_format, int width, int height, int fps);
-    // static void cb(QUVCFrame *frame, void *user_data);
+    static void cb(UVCFrame *frame, void *user_data);
 
 private:
     UVCObject *uvc_object_;
-    // QUVCFrameCallback *cb_;
+    QUVCCallbackAndData *cb_and_data_;
 
 signals:
     void frameChanged(QUVCFrame *frame);
 };
 
-#endif // !_UVC_THREAD_H
+#endif // !_UVC_QOBJECT_H

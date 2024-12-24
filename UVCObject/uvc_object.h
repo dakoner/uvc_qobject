@@ -30,7 +30,12 @@ class UVCFrame {
     void *user_ptr_;
 };
 
-// typedef void(UVCFrameCallback(UVCFrame *frame, void *user_ptr));
+typedef void(UVCFrameCallback(UVCFrame *frame, void *user_data));
+
+struct UVCCallbackAndData {
+    UVCFrameCallback* cb;
+    void *user_data;
+};
 
 
 class UVCObject
@@ -43,10 +48,11 @@ public:
     void open_device(UVCDevice &device, UVCDeviceHandle *devh);
     void close_device(UVCDeviceHandle &device_handle_);
     // std::list<FormatAndFrameDescriptors *> *get_formats(::uvc_device_handle *devh);
-    void stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_format, int width, int height, int fps);//, UVCFrameCallback *cb, void *user_data);
+    void stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_format, int width, int height, int fps, UVCFrameCallback *cb, void *user_data);
     static void cb(uvc_frame* frame, void* user_ptr);
     // UVCFrameCallback *cb_;
     // void *user_data_;
+    UVCCallbackAndData *cb_and_data_;
 private:
     ::uvc_context_t *ctx_;
 };

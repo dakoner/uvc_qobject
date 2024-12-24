@@ -67,12 +67,14 @@ void UVCQObject::close_device(QUVCDeviceHandle &device_handle)
 
 void UVCQObject::stream(QUVCDeviceHandle &device_handle, QUVCFrameFormat frame_format, int width, int height, int fps)
 {
-    uvc_object_->stream(*device_handle.device_handle_, frame_format, width, height, fps); //, &UVCQObject::cb, this);
+    uvc_object_->stream(*device_handle.device_handle_, frame_format, width, height, fps, &UVCQObject::cb, this);
 }
 
-// void UVCQObject::cb(QUVCFrame *frame, void* user_data) {
-//     // signal data
-//     UVCQObject *this_ = (UVCQObject*)user_data;
-//     emit this_->frameChanged(frame);
+void UVCQObject::cb(UVCFrame *frame, void* user_data) {
+    printf("Got UVCQObject cb\n");
+    // signal data
+    QUVCFrame *qf = new QUVCFrame(frame);
 
-// }
+    UVCQObject *this_ = (UVCQObject*)user_data;
+    emit this_->frameChanged(qf);
+}

@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     UVCDeviceHandle device_handle;
     uvc_object.open_device(device, &device_handle);
     UVCFrameFormat format = UVC_FRAME_FORMAT_YUYV;
-    uvc_object.stream(device_handle, format, 1280, 720, 120);//, &cb, (void *)&uvc_object);
+    uvc_object.stream(device_handle, format, 1280, 720, 120, &cb, NULL);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     uvc_object.close_device(device_handle);

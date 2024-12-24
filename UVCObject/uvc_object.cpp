@@ -132,7 +132,7 @@ void UVCObject::close_device(UVCDeviceHandle &device_handle)
     puts("Device closed");
 }
 
-void UVCObject::stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_format, int width, int height, int fps)// , UVCFrameCallback* cb, void *user_data)
+void UVCObject::stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_format, int width, int height, int fps, UVCFrameCallback* cb, void *user_data)
 {
     ::uvc_stream_ctrl_t ctrl;
 
@@ -151,8 +151,9 @@ void UVCObject::stream(UVCDeviceHandle device_handle, UVCFrameFormat frame_forma
     /* Print out the result */
     ::uvc_print_stream_ctrl(&ctrl, stderr);
 
-    // cb_ = cb;
-    // user_data_ = user_data;
+    cb_and_data_ = new UVCCallbackAndData();
+    cb_and_data_->cb = cb;
+    cb_and_data_->user_data = user_data;
     res = ::uvc_start_streaming(device_handle.device_handle_, &ctrl, &UVCObject::cb, this, 0);
 
     if (res < 0)
@@ -168,5 +169,5 @@ void UVCObject::cb(uvc_frame_t *frame, void *user_data) {
     UVCFrame *frame_ = new UVCFrame(frame, NULL);
     printf("Callback: %p %p\n", (void *)this_, (void *)frame_);
     
-    //this_->cb_(frame_, NULL);
+    this_->cb_and_data_->cb(frame_, this_->cb_and_data_->user_data);
 }

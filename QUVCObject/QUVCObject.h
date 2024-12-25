@@ -2,8 +2,7 @@
 #define _QUVCObject_H
 
 #include <QtCore/qobject.h>
-#include <QtCore/qlist.h>
-#include <QTimer>
+#include <QImage>
 #include "libuvc/libuvc.h"
 
 
@@ -49,7 +48,7 @@ private:
     ::uvc_context_t *ctx_;
 
 signals:
-    void frameChanged(UVCFrame *frame);
+    void frameChanged(QImage *image);
 };
 
 #endif // !_QUVCObject_H

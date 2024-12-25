@@ -14,6 +14,7 @@ qt_add_library(QUVCObject STATIC ${HEADERS} ${SOURCES} ${QT_RESOURCES})
 target_link_libraries(QUVCObject
     PUBLIC
     Qt6::Core
+    Qt6::Gui
     usb
     uvc
     jpeg

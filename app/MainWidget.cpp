@@ -17,10 +17,11 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
 
     size_ = 0;
     ns_average_ = 0;
-    init();
-    fps_timer_.start();
     QObject::connect(&QUVCObject_, &QUVCObject::frameChanged,
                      this, &MainWidget::cb);
+    init();
+    fps_timer_.start();
+
 }
 
 void MainWidget::init()
@@ -50,19 +51,17 @@ qint64 addToAverage_int64(qint64 average, int size, qint64 value)
     return result;
 }
 
-void MainWidget::cb(UVCFrame *frame)
+void MainWidget::cb(QImage *image)
 {
-    printf("Main widget got frame\n");
-    // qint64 dt = fps_timer_.nsecsElapsed();
-    // ns_average_ = addToAverage_int64(ns_average_, size_, dt);
-    // if (size_ % 120 == 0)
-    //     printf("fps: %lld\n", (1000*1000*1000/ns_average_));
-    // fps_timer_.restart();
-    // size_++;
-    // QImage i((uchar *)frame->data, frame->width, frame->height, QImage::Format::Format_RGB888);
-    // QPixmap p = QPixmap::fromImage(i);
-    // label_->setPixmap(p);
-    // uvc_free_frame(frame);
+    qint64 dt = fps_timer_.nsecsElapsed();
+    ns_average_ = addToAverage_int64(ns_average_, size_, dt);
+    if (size_ % 120 == 0)
+        printf("fps: %lld\n", (1000*1000*1000/ns_average_));
+    fps_timer_.restart();
+    size_++;
+    QPixmap p = QPixmap::fromImage(*image);
+    delete image;
+    label_->setPixmap(p);
 }
 
 // Destructor

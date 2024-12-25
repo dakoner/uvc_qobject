@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "QUVCObject.h"
 #include <QElapsedTimer>
+#include <QImage>
 
 class QPushButton;
 class QLabel;
@@ -23,7 +24,7 @@ private:
    QUVCObject QUVCObject_;
    QPushButton* button_;
    QLabel* label_;
-   void cb(UVCFrame *);
+   void cb(QImage *);
    QElapsedTimer fps_timer_;
    int size_;
    qint64 ns_average_;

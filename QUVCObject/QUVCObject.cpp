@@ -1,5 +1,5 @@
 #include "QUVCObject.h"
-
+#include <QPixmap>
 
 UVCDevice::UVCDevice() : device_(NULL)
 {
@@ -17,7 +17,8 @@ UVCDeviceHandle::UVCDeviceHandle(uvc_device_handle_t *device_handle) : device_ha
 {
 }
 
-UVCFrame::UVCFrame(uvc_frame *frame): frame_(frame) {
+UVCFrame::UVCFrame(uvc_frame *frame) : frame_(frame)
+{
 }
 
 QUVCObject::QUVCObject()
@@ -33,11 +34,9 @@ QUVCObject::QUVCObject()
 
 QUVCObject::~QUVCObject()
 {
-     ::uvc_exit(ctx_);
+    ::uvc_exit(ctx_);
     puts("UVC exited");
 }
-
-
 
 void QUVCObject::find_device(UVCDevice *device, int vid, int pid, const char *sn)
 {
@@ -72,7 +71,6 @@ void QUVCObject::open_device(UVCDevice &device, UVCDeviceHandle *devh)
         puts("Device opened");
     }
 }
-
 
 void QUVCObject::stream(UVCDeviceHandle &device_handle, UVCFrameFormat frame_format, int width, int height, int fps)
 {
@@ -109,11 +107,25 @@ void QUVCObject::close_device(UVCDeviceHandle &device_handle)
     puts("Device closed");
 }
 
-
-void QUVCObject::cb(uvc_frame_t *frame, void* user_data) {
-    printf("Got QUVCObject cb\n");
+void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
+{
+    uvc_error ret;
     // signal data
-    UVCFrame *uframe = new UVCFrame(frame);
-    QUVCObject *this_ = (QUVCObject*)user_data;
-    emit this_->frameChanged(uframe);
+    uvc_frame_t *bgr;
+    bgr = uvc_allocate_frame(frame->width * frame->height * 3);
+    if (!bgr)
+    {
+        printf("unable to allocate bgr frame!\n");
+        return;
+    }
+    ret = uvc_any2bgr(frame, bgr);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_any2bgr");
+        uvc_free_frame(bgr);
+        return;
+    }
+    QUVCObject *this_ = (QUVCObject *)user_data;
+    QImage *i = new QImage((uchar *)bgr->data, frame->width, frame->height, QImage::Format_RGB888);
+    emit this_->frameChanged(i);
 }

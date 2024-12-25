@@ -51,7 +51,7 @@ qint64 addToAverage_int64(qint64 average, int size, qint64 value)
     return result;
 }
 
-void MainWidget::cb(QImage *image)
+void MainWidget::cb(QImage image)
 {
     qint64 dt = fps_timer_.nsecsElapsed();
     ns_average_ = addToAverage_int64(ns_average_, size_, dt);
@@ -59,8 +59,7 @@ void MainWidget::cb(QImage *image)
         printf("fps: %lld\n", (1000*1000*1000/ns_average_));
     fps_timer_.restart();
     size_++;
-    QPixmap p = QPixmap::fromImage(*image);
-    delete image;
+    QPixmap p = QPixmap::fromImage(image);
     label_->setPixmap(p);
 }
 

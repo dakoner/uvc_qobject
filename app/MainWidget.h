@@ -24,7 +24,7 @@ private:
    QUVCObject QUVCObject_;
    QPushButton* button_;
    QLabel* label_;
-   void cb(QImage *);
+   void cb(QImage);
    QElapsedTimer fps_timer_;
    int size_;
    qint64 ns_average_;

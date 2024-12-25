@@ -49,5 +49,5 @@ public:
     void close_device(UVCDeviceHandle &device_handle_);
     void stream(UVCDeviceHandle &device_handle, UVCFrameFormat frame_format, int width, int height, int fps);
 signals:
-    void frameChanged(QImage *image);
+    void frameChanged(QImage image);
 };

@@ -48,7 +48,7 @@ private:
     ::uvc_context_t *ctx_;
 
 signals:
-    void frameChanged(QImage *image);
+    void frameChanged(QImage image);
 };
 
 #endif // !_QUVCObject_H

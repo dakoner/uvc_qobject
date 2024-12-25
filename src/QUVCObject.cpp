@@ -109,6 +109,8 @@ void QUVCObject::close_device(UVCDeviceHandle &device_handle)
 
 void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
 {
+    printf("Got cb\n");
+
     uvc_error ret;
     // signal data
     uvc_frame_t *bgr;
@@ -126,6 +128,7 @@ void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
         return;
     }
     QUVCObject *this_ = (QUVCObject *)user_data;
-    QImage *i = new QImage((uchar *)bgr->data, frame->width, frame->height, QImage::Format_RGB888);
+    QImage i((uchar *)bgr->data, frame->width, frame->height, QImage::Format_RGB888);
+    printf("Emitting signal\n");
     emit this_->frameChanged(i);
 }

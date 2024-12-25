@@ -1,5 +1,5 @@
 qt_add_executable(app main.cpp MainWidget.cpp MainWidget.h ${QT_RESOURCES})
-include_directories(../QUVCObject)
+include_directories(../src)
 
 target_link_libraries(app
     PUBLIC

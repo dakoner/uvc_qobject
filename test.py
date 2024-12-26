@@ -16,8 +16,6 @@ class ImageViewer:
         self.label = QLabel(parent=self.window)
         self.label.show()
         self.label.resize(1280,720)
-        self.pixmap = QPixmap()
-
         self.window.show()
         self.q = QUVCObject.QUVCObject()
         self.d = QUVCObject.UVCDevice()
@@ -30,9 +28,10 @@ class ImageViewer:
     
 
     def frameChanged(self, image):
-        self.pixmap.convertFromImage(image)
-        
-        self.label.setPixmap(self.pixmap)
+        pixmap = QPixmap.fromImage(image)
+        self.label.setPixmap(pixmap)
+        self.label.resize(pixmap.size())
+
 if __name__ == "__main__":
     iv = ImageViewer()
     sys.exit(iv.app.exec())

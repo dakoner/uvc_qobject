@@ -17,9 +17,6 @@ UVCDeviceHandle::UVCDeviceHandle(uvc_device_handle_t *device_handle) : device_ha
 {
 }
 
-UVCFrame::UVCFrame(uvc_frame *frame) : frame_(frame)
-{
-}
 
 QUVCObject::QUVCObject()
 {
@@ -101,6 +98,10 @@ void QUVCObject::stream(UVCDeviceHandle &device_handle, UVCFrameFormat frame_for
     }
 }
 
+void QUVCObject::stop_streaming(UVCDeviceHandle &device_handle)
+{
+    uvc_stop_streaming(device_handle.device_handle_);
+}
 void QUVCObject::close_device(UVCDeviceHandle &device_handle)
 {
     ::uvc_close(device_handle.device_handle_);
@@ -109,12 +110,10 @@ void QUVCObject::close_device(UVCDeviceHandle &device_handle)
 
 void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
 {
-    printf("Got cb\n");
-
     uvc_error ret;
     // signal data
     uvc_frame_t *bgr;
-    bgr = uvc_allocate_frame(frame->width * frame->height * 3);
+    bgr = uvc_allocate_frame(frame->data_bytes);
     if (!bgr)
     {
         printf("unable to allocate bgr frame!\n");
@@ -128,7 +127,10 @@ void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
         return;
     }
     QUVCObject *this_ = (QUVCObject *)user_data;
-    QImage i((uchar *)bgr->data, frame->width, frame->height, QImage::Format_RGB888);
-    printf("Emitting signal\n");
-    emit this_->frameChanged(i);
+    uvc_frame_t *bgr_copy = uvc_allocate_frame(frame->data_bytes);
+    uvc_duplicate_frame(bgr, bgr_copy);
+    uvc_free_frame(bgr);
+    UVCFrame *uvc_frame = new UVCFrame(bgr_copy);
+    emit this_->frameChanged(uvc_frame);
+    
 }

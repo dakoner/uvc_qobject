@@ -2,7 +2,7 @@ import time
 import QUVCObject
 import sys
 from PyQt6.QtCore import QTimer
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QImage
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel
 
 
@@ -26,11 +26,14 @@ class ImageViewer:
         self.q.frameChanged.connect(self.frameChanged)
         self.q.stream(self.dh, format, 1280, 720, 120)
     
-
+    def closeEvent(self, event):
+        print("window closed")
+        self.q.stop_streaming(self.dh)
+        self.q.close_device(self.dh)
+        
     def frameChanged(self, image):
         pixmap = QPixmap.fromImage(image)
         self.label.setPixmap(pixmap)
-        self.label.resize(pixmap.size())
 
 if __name__ == "__main__":
     iv = ImageViewer()

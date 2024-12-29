@@ -9,6 +9,7 @@ const char *QUVCObject_VERSION_STR;
 %ModuleCode
 static int QUVCObject_VERSION = 0x060402;
 static const char *QUVCObject_VERSION_STR = "6.4.2";
+
 %End
 
 typedef int UVCFrameFormat;
@@ -33,9 +34,8 @@ public:
     UVCDeviceHandle();
 };
 
-
-
 class QUVCObject: QObject {
+
 
 %TypeHeaderCode
 #include "QUVCObject.h"
@@ -48,6 +48,7 @@ public:
     void open_device(UVCDevice &device, UVCDeviceHandle *devh);
     void close_device(UVCDeviceHandle &device_handle_);
     void stream(UVCDeviceHandle &device_handle, UVCFrameFormat frame_format, int width, int height, int fps);
+
 signals:
     void frameChanged(QImage image);
 };

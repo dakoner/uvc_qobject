@@ -102,10 +102,15 @@ void QUVCObject::stop_streaming(UVCDeviceHandle &device_handle)
 {
     uvc_stop_streaming(device_handle.device_handle_);
 }
+
 void QUVCObject::close_device(UVCDeviceHandle &device_handle)
 {
     ::uvc_close(device_handle.device_handle_);
     puts("Device closed");
+}
+
+void uvc_free_frame_void(void *bgr) {
+    uvc_free_frame((uvc_frame_t *)bgr);
 }
 
 void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
@@ -127,10 +132,6 @@ void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
         return;
     }
     QUVCObject *this_ = (QUVCObject *)user_data;
-    uvc_frame_t *bgr_copy = uvc_allocate_frame(frame->data_bytes);
-    uvc_duplicate_frame(bgr, bgr_copy);
-    uvc_free_frame(bgr);
-    UVCFrame *uvc_frame = new UVCFrame(bgr_copy);
-    emit this_->frameChanged(uvc_frame);
-    
+    QImage image((unsigned char *)bgr->data, frame->width, frame->height, QImage::Format::Format_BGR888, uvc_free_frame_void, (void *)bgr);
+    emit this_->frameChanged(image);
 }

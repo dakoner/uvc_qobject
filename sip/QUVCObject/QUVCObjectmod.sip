@@ -9,7 +9,6 @@ const char *QUVCObject_VERSION_STR;
 %ModuleCode
 static int QUVCObject_VERSION = 0x060402;
 static const char *QUVCObject_VERSION_STR = "6.4.2";
-
 %End
 
 typedef int UVCFrameFormat;
@@ -48,6 +47,12 @@ public:
     void open_device(UVCDevice &device, UVCDeviceHandle *devh);
     void close_device(UVCDeviceHandle &device_handle_);
     void stream(UVCDeviceHandle &device_handle, UVCFrameFormat frame_format, int width, int height, int fps);
+
+    unsigned char get_ae_mode(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_ae_mode(UVCDeviceHandle &device_handle, unsigned char mode);
+
+    unsigned int get_exposure_abs(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_exposure_abs(UVCDeviceHandle &device_handle, unsigned int time);
 
 signals:
     void frameChanged(QImage image);

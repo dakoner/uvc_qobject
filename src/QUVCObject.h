@@ -37,6 +37,13 @@ public:
     void stop_streaming(UVCDeviceHandle &device_handle);
     static void cb(uvc_frame_t *frame, void *user_data);
 
+    uint8_t get_ae_mode(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_ae_mode(UVCDeviceHandle &device_handle, unsigned char mode);
+
+
+    uint32_t get_exposure_abs(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_exposure_abs(UVCDeviceHandle &device_handle, uint32_t mode);
+
 private:
     ::uvc_context_t *ctx_;
 
@@ -45,3 +52,4 @@ signals:
 };
 
 #endif // !_QUVCObject_H
+

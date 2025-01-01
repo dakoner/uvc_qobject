@@ -17,7 +17,6 @@ UVCDeviceHandle::UVCDeviceHandle(uvc_device_handle_t *device_handle) : device_ha
 {
 }
 
-
 QUVCObject::QUVCObject()
 {
     ::uvc_error res = ::uvc_init(&ctx_, NULL);
@@ -109,7 +108,8 @@ void QUVCObject::close_device(UVCDeviceHandle &device_handle)
     puts("Device closed");
 }
 
-void uvc_free_frame_void(void *bgr) {
+void uvc_free_frame_void(void *bgr)
+{
     uvc_free_frame((uvc_frame_t *)bgr);
 }
 
@@ -134,4 +134,45 @@ void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
     QUVCObject *this_ = (QUVCObject *)user_data;
     QImage image((unsigned char *)bgr->data, frame->width, frame->height, QImage::Format::Format_BGR888, uvc_free_frame_void, (void *)bgr);
     emit this_->frameChanged(image);
+}
+
+uint8_t QUVCObject::get_ae_mode(UVCDeviceHandle &device_handle, unsigned char req_code)
+{
+    uint8_t mode;
+    uvc_error_t ret = uvc_get_ae_mode(device_handle.device_handle_, &mode, (enum uvc_req_code)req_code);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_get_ae_mode");
+    }
+    return mode;
+}
+
+void QUVCObject::set_ae_mode(UVCDeviceHandle &device_handle, uint8_t mode)
+{
+    uvc_error_t ret = uvc_set_ae_mode(device_handle.device_handle_, mode);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_set_ae_mode");
+    }
+}
+
+
+uint32_t QUVCObject::get_exposure_abs(UVCDeviceHandle &device_handle, unsigned char req_code)
+{
+    uint32_t time;
+    uvc_error_t ret = uvc_get_exposure_abs(device_handle.device_handle_, &time, (enum uvc_req_code)req_code);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_get_exposure_abs");
+    }
+    return time;
+}
+
+void QUVCObject::set_exposure_abs(UVCDeviceHandle &device_handle, uint32_t time)
+{
+    uvc_error_t ret = uvc_set_exposure_abs(device_handle.device_handle_, time);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_set_ae_mode");
+    }
 }

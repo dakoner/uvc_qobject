@@ -22,10 +22,19 @@ class ImageViewer:
         self.q.find_device(self.d, 0x4b4, 0x477, None)
         self.dh = QUVCObject.UVCDeviceHandle()
         self.q.open_device(self.d, self.dh)
+        print(self.q.get_ae_mode(self.dh, bytearray.fromhex('81')))
+        print(self.q.get_ae_mode(self.dh, bytearray.fromhex('82')))
+        print(self.q.get_ae_mode(self.dh, bytearray.fromhex('83')))
+        self.q.set_ae_mode(self.dh,     bytearray.fromhex('00'))
+
+        print(self.q.get_exposure_abs(self.dh, bytearray.fromhex('81')))
+        print(self.q.get_exposure_abs(self.dh, bytearray.fromhex('82')))
+        print(self.q.get_exposure_abs(self.dh, bytearray.fromhex('83')))
+        self.q.set_exposure_abs(self.dh,     5)
+        
         format = 3
         self.q.frameChanged.connect(self.frameChanged)
         self.q.stream(self.dh, format, 1280, 720, 120)
-    
     def closeEvent(self, event):
         print("window closed")
         self.q.stop_streaming(self.dh)

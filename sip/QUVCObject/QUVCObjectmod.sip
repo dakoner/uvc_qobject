@@ -54,6 +54,12 @@ public:
     unsigned int get_exposure_abs(UVCDeviceHandle &device_handle,  unsigned char req_code);
     void set_exposure_abs(UVCDeviceHandle &device_handle, unsigned int time);
 
+    unsigned short get_white_balance_temperature(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_white_balance_temperature(UVCDeviceHandle &device_handle, unsigned short mode);
+
+    unsigned char get_white_balance_temperature_auto(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_white_balance_temperature_auto(UVCDeviceHandle &device_handle, unsigned char mode);
+
 signals:
     void frameChanged(QImage image);
 };

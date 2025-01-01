@@ -44,6 +44,13 @@ public:
     uint32_t get_exposure_abs(UVCDeviceHandle &device_handle,  unsigned char req_code);
     void set_exposure_abs(UVCDeviceHandle &device_handle, uint32_t mode);
 
+
+    uint16_t get_white_balance_temperature(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_white_balance_temperature(UVCDeviceHandle &device_handle, uint16_t mode);
+
+    uint8_t get_white_balance_temperature_auto(UVCDeviceHandle &device_handle,  unsigned char req_code);
+    void set_white_balance_temperature_auto(UVCDeviceHandle &device_handle, uint8_t mode);
+
 private:
     ::uvc_context_t *ctx_;
 

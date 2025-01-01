@@ -173,6 +173,49 @@ void QUVCObject::set_exposure_abs(UVCDeviceHandle &device_handle, uint32_t time)
     uvc_error_t ret = uvc_set_exposure_abs(device_handle.device_handle_, time);
     if (ret)
     {
-        uvc_perror(ret, "uvc_set_ae_mode");
+        uvc_perror(ret, "uvc_set_exposure_abs");
+    }
+}
+
+
+
+uint16_t QUVCObject::get_white_balance_temperature(UVCDeviceHandle &device_handle, unsigned char req_code)
+{
+    uint16_t temp;
+    uvc_error_t ret = uvc_get_white_balance_temperature(device_handle.device_handle_, &temp, (enum uvc_req_code)req_code);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_get_white_balance_temperature");
+    }
+    return temp;
+}
+
+void QUVCObject::set_white_balance_temperature(UVCDeviceHandle &device_handle, uint16_t temp)
+{
+    uvc_error_t ret = uvc_set_white_balance_temperature(device_handle.device_handle_, temp);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_set_white_balance_temperature");
+    }
+}
+
+
+uint8_t QUVCObject::get_white_balance_temperature_auto(UVCDeviceHandle &device_handle, unsigned char req_code)
+{
+    uint8_t mode;
+    uvc_error_t ret = uvc_get_white_balance_temperature_auto(device_handle.device_handle_, &mode, (enum uvc_req_code)req_code);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_get_white_balance_temperature_auto");
+    }
+    return mode;
+}
+
+void QUVCObject::set_white_balance_temperature_auto(UVCDeviceHandle &device_handle, uint8_t mode)
+{
+    uvc_error_t ret = uvc_set_white_balance_temperature_auto(device_handle.device_handle_, mode);
+    if (ret)
+    {
+        uvc_perror(ret, "uvc_set_white_balance_temperature_auto");
     }
 }

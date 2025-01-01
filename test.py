@@ -32,6 +32,18 @@ class ImageViewer:
         print(self.q.get_exposure_abs(self.dh, bytearray.fromhex('83')))
         self.q.set_exposure_abs(self.dh,     5)
         
+
+        print(self.q.get_white_balance_temperature_auto(self.dh, bytearray.fromhex('81')))
+        print(self.q.get_white_balance_temperature_auto(self.dh, bytearray.fromhex('82')))
+        print(self.q.get_white_balance_temperature_auto(self.dh, bytearray.fromhex('83')))
+        self.q.set_white_balance_temperature_auto(self.dh,   bytearray.fromhex('00'))
+        
+
+        print(self.q.get_white_balance_temperature(self.dh, bytearray.fromhex('81')))
+        print(self.q.get_white_balance_temperature(self.dh, bytearray.fromhex('82')))
+        print(self.q.get_white_balance_temperature(self.dh, bytearray.fromhex('83')))
+        self.q.set_white_balance_temperature(self.dh,     5000)
+                                                  
         format = 3
         self.q.frameChanged.connect(self.frameChanged)
         self.q.stream(self.dh, format, 1280, 720, 120)

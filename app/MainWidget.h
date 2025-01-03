@@ -21,10 +21,12 @@ public:
     void test(QPixmap);
     void init(void);
 private:
+    FILE *file_;
    QUVCObject QUVCObject_;
    QPushButton* button_;
    QLabel* label_;
    void cb(QImage);
+   void cb_yuv(void *frame, int width, int height, int data_bytes, int step);
    QElapsedTimer fps_timer_;
    int size_;
    qint64 ns_average_;

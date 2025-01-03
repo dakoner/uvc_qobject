@@ -108,32 +108,37 @@ void QUVCObject::close_device(UVCDeviceHandle &device_handle)
     puts("Device closed");
 }
 
-void uvc_free_frame_void(void *bgr)
+void my_free_frame(void *frame)
 {
-    uvc_free_frame((uvc_frame_t *)bgr);
+    uvc_free_frame((uvc_frame_t *)frame);
 }
 
 void QUVCObject::cb(uvc_frame_t *frame, void *user_data)
 {
+    QUVCObject *this_ = (QUVCObject *)user_data;
     uvc_error ret;
     // signal data
-    uvc_frame_t *bgr;
-    bgr = uvc_allocate_frame(frame->data_bytes);
-    if (!bgr)
-    {
-        printf("unable to allocate bgr frame!\n");
-        return;
-    }
-    ret = uvc_any2bgr(frame, bgr);
-    if (ret)
-    {
-        uvc_perror(ret, "uvc_any2bgr");
-        uvc_free_frame(bgr);
-        return;
-    }
-    QUVCObject *this_ = (QUVCObject *)user_data;
-    QImage image((unsigned char *)bgr->data, frame->width, frame->height, QImage::Format::Format_BGR888, uvc_free_frame_void, (void *)bgr);
-    emit this_->frameChanged(image);
+    //uvc_frame_t *yuv_copy;
+    //yuv_copy = uvc_allocate_frame(frame->data_bytes);
+    //uvc_duplicate_frame(frame, yuv_copy);
+    emit this_->yuvFrameChanged((void *)frame->data, frame->height, frame->width, frame->data_bytes, frame->step);
+
+    // uvc_frame_t *bgr;
+    // bgr = uvc_allocate_frame(frame->data_bytes);
+    // if (!bgr)
+    // {
+    //     printf("unable to allocate bgr frame!\n");
+    //     return;
+    // }
+    // ret = uvc_any2rgb(frame, bgr);
+    // if (ret)
+    // {
+    //     uvc_perror(ret, "uvc_any2rgb");
+    //     uvc_free_frame(bgr);
+    //     return;
+    // }
+    // QImage image((unsigned char *)bgr->data, frame->width, frame->height, QImage::Format::Format_RGB888, my_free_frame, (void *)bgr);
+    // emit this_->frameChanged(image);
 }
 
 uint8_t QUVCObject::get_ae_mode(UVCDeviceHandle &device_handle, unsigned char req_code)

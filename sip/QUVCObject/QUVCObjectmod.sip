@@ -32,6 +32,7 @@ class UVCDeviceHandle
 public:
     UVCDeviceHandle();
 };
+void my_free_frame(void *frame);
 
 class QUVCObject: QObject {
 
@@ -60,6 +61,9 @@ public:
     unsigned char get_white_balance_temperature_auto(UVCDeviceHandle &device_handle,  unsigned char req_code);
     void set_white_balance_temperature_auto(UVCDeviceHandle &device_handle, unsigned char mode);
 
+
 signals:
     void frameChanged(QImage image);
+    void yuvFrameChanged(void *frame_data, int width, int height, int data_bytes, int step);
+
 };

@@ -18,7 +18,9 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     size_ = 0;
     ns_average_ = 0;
     QObject::connect(&QUVCObject_, &QUVCObject::frameChanged,
-                     this, &MainWidget::cb);
+                     this, &MainWidget::cb, Qt::DirectConnection);
+    QObject::connect(&QUVCObject_, &QUVCObject::yuvFrameChanged,
+                     this, &MainWidget::cb_yuv, Qt::DirectConnection);
     init();
     fps_timer_.start();
 
@@ -36,6 +38,7 @@ void MainWidget::init()
     UVCFrameFormat format = UVC_FRAME_FORMAT_YUYV;
     QUVCObject_.stream(device_handle, format, 1280, 720, 120);
     // uvc_object.close_device(device_handle);
+    file_ = fopen("binary_file.bin", "wb");
 }
 
 
@@ -51,6 +54,12 @@ qint64 addToAverage_int64(qint64 average, int size, qint64 value)
     return result;
 }
 
+void MainWidget::cb_yuv(void *frame, int width, int height, int data_bytes, int step) {
+    printf("frame: %p Width: %d height: %d data_bytes: %d\n step: %d\n", frame, width, height, data_bytes, step);
+    fwrite(frame, sizeof(quint8), data_bytes, file_);
+    fflush(file_);
+}
+
 void MainWidget::cb(QImage image)
 {
     qint64 dt = fps_timer_.nsecsElapsed();
@@ -61,6 +70,7 @@ void MainWidget::cb(QImage image)
     size_++;
     QPixmap p = QPixmap::fromImage(image);
     label_->setPixmap(p);
+    
 }
 
 // Destructor
@@ -68,4 +78,5 @@ MainWidget::~MainWidget()
 {
     delete button_;
     delete label_;
+    fclose(file_);
 }

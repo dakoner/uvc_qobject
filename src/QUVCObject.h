@@ -22,6 +22,7 @@ public:
     UVCDeviceHandle();
     UVCDeviceHandle(uvc_device_handle_t *device_handle);
 };
+void my_free_frame(void *frame_data);
 
 class QUVCObject : public QObject
 {
@@ -55,6 +56,7 @@ private:
     ::uvc_context_t *ctx_;
 
 signals:
+    void yuvFrameChanged(void *frame_data, int width, int height, int data_bytes, int step);
     void frameChanged(QImage image);
 };
 
